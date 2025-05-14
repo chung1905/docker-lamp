@@ -28,13 +28,13 @@ services:
       - ./search_engine/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
       - elasticsearch_data:/usr/share/elasticsearch/data
     ports:
-      - "9200:9200"
+      - "9201:9200"
     environment:
       ES_JAVA_OPTS: "-Xmx2g -Xms2g"
   opensearch:
     image: opensearchproject/opensearch:latest
     ports:
-      - "9200:9200"
+      - "9202:9200"
     environment:
       - discovery.type=single-node
     volumes:
