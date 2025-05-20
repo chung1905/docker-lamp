@@ -70,7 +70,8 @@ RUN echo "php_admin_value[memory_limit] = 2G" >> /usr/local/etc/php-fpm.d/www.co
 && echo "memory_limit = 2G" >> /usr/local/etc/php/conf.d/memory_limit.ini
 
 # Set upload_max_file
-RUN echo "upload_max_filesize = 100M" >> /usr/local/etc/php/conf.d/upload_max_filesize.ini
+RUN echo "upload_max_filesize = 10G" >> /usr/local/etc/php/conf.d/upload_max_filesize.ini
+RUN echo "post_max_size = 10G" >> /usr/local/etc/php/conf.d/post_max_size.ini
 
 # Set execution timeout
 RUN echo "request_terminate_timeout = 0" >> /usr/local/etc/php-fpm.d/www.conf \
