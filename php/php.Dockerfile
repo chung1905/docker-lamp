@@ -24,6 +24,7 @@ RUN apt-get -y update \
         libjpeg-dev \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
+        libicu-dev \
         libzip-dev \
         bash-completion \
         git \
