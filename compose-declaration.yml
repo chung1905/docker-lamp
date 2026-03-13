@@ -76,6 +76,7 @@ services:
       - mailpit_data:/data
     ports:
       - "8025:8025"
+      - "1025:1025"
     environment:
       MP_MAX_MESSAGES: 500
       MP_DATABASE: /data/mailpit.db
