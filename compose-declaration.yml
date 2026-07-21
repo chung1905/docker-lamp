@@ -10,6 +10,13 @@ services:
         PHP_VER: 8
     environment:
       XDEBUG_MODE: ${XDEBUG_MODE:-debug}
+      # Reach other *.localhost projects from PHP (libcurl force-resolves them to
+      # 127.0.0.1); the entrypoint forwards loopback :80/:443 here. See php/bin/localhost-forward.sh.
+      LOCALHOST_HTTP_FORWARD: ${LOCALHOST_HTTP_FORWARD:-httpd:80}
+      LOCALHOST_HTTPS_FORWARD: ${LOCALHOST_HTTPS_FORWARD:-httpd:443}
+    sysctls:
+      # Let the non-root user bind :80/:443 for the loopback forwarder above.
+      - net.ipv4.ip_unprivileged_port_start=0
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:

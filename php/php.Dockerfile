@@ -30,6 +30,7 @@ RUN apt-get -y update \
         git \
         unzip \
         libpq-dev \
+        socat \
     && apt-get autoremove -y \
     && apt-get autoclean -y \
     && rm -rf /var/lib/apt/lists/*
@@ -38,7 +39,7 @@ RUN apt-get -y update \
 RUN echo "7.0 7.1 7.2 7.3" | grep -w -q ${PHP_VER} \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     || docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/
-RUN docker-php-ext-install -j$(nproc) iconv pdo_mysql xsl intl zip bcmath gd soap gettext exif sockets pdo_pgsql mysqli \
+RUN docker-php-ext-install -j$(nproc) iconv pdo_mysql xsl intl zip bcmath gd soap gettext exif sockets pdo_pgsql mysqli ftp \
     && if echo "7.0 7.1 7.2 7.3 7.4 8.0 8.1 8.2 8.3 8.4" | grep -w -q ${PHP_VER}; then \
         docker-php-ext-install -j$(nproc) opcache; \
     fi
@@ -93,3 +94,9 @@ COPY ./bin/* /usr/local/bin/
 USER ${USER}
 
 RUN git config --global --add safe.directory '*'
+
+# Wrap the stock entrypoint so a *.localhost project in another container is
+# reachable via libcurl (which force-resolves *.localhost to 127.0.0.1).
+# No-op unless LOCALHOST_HTTP_FORWARD is set. See bin/localhost-forward.sh.
+ENTRYPOINT ["/usr/local/bin/localhost-forward.sh"]
+CMD ["php-fpm"]
