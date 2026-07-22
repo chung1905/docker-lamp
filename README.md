@@ -5,14 +5,12 @@ This docker setup has been tested with Magento 2, WordPress and Symfony 2 -> Sym
 ## How to set up:
 1. Install `docker` and `docker compose` properly
 2. Clone project and `cd` into the that
-3. Create configurations files (for the first time):
-- `.env`: define docker env variable
-- `dclamp.env`: define PHP versions and services
-- `docker-compose.yml`: Docker compose file
+3. Configure PHP versions and services (first time only, interactive):
 ```shell
-./dclamp
+make config
 ```
-- Next time, you have to run `./dclamp config` and `./dclamp generate` separately.
+This creates `dclamp.env` (PHP versions + services) and `.env` (docker env vars).
+The `docker-compose.yml` file is **generated** from these — you never edit it by hand.
 4. Generate wildcard self-signed certificates for `*.*.localhost` (optional)
 ```shell
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
@@ -20,10 +18,17 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 -out ./httpd/certs/x.x.localhost.crt \
 -subj "/C=XX/ST=State/L=City/O=Company/OU=CompanySectionName/CN=*.*.localhost"
 ```
-5. Create and run container:
+5. Create and run containers:
 ```shell
-docker compose up -d
+make up
 ```
+`make up` regenerates `docker-compose.yml` automatically whenever `dclamp.env` or
+`compose-declaration.yml` change, so you no longer have to run `dclamp` by hand
+before `docker compose up`. Run `make help` to see all targets (`up`, `down`,
+`logs`, `build`, ...).
+
+> Prefer the raw commands? `./dclamp generate` followed by `docker compose up -d`
+> still works exactly as before — `make` is just a thin wrapper around them.
 
 ## PHP web application:
 - Write your code at public_html directory
@@ -48,13 +53,9 @@ address=/localhost/127.0.0.1
 - Restart Apache container: `docker restart httpd`
 
 ## Use PHP CLI:
-- Run command
+- Shell into a PHP container (replace `73` with your version):
 ```shell
 docker compose exec php73 /bin/bash
-``` 
-or
-```shell
-docker compose exec php{xx} /bin/bash
 ```
 - Run you PHP application with command `php ...`
 - To debug PHP CLI application: replace `php` by `xdebug`
